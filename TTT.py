@@ -130,15 +130,24 @@ while turn <= 9 or winnerO == False or winnerX == False:
     PlaceSign()
     if wrongInput == True:
         print("Wrong input, please try again")
+        time.sleep(2)
         wrongInput = False
         continue
     else:
         CheckWinner()
         if winnerO == True:
-            print("The winner is O!")
+            os.system('clear')
             break
         elif winnerX == True:
-            print("The winner is X!")
+            os.system('clear')
+            break
+
         else:
             turn += 1
             continue
+
+if winnerO == True:
+    printBoard()
+    print("The winner is O")
+elif winnerX == True:
+    print("The winner is X")
