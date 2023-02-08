@@ -1,5 +1,6 @@
 import os
-import sys, time 
+import sys, time
+import random
 
 board = [" ", " ", " ", " ", " ", " ", " ", " ", " "]
 winnerX = False
@@ -12,6 +13,9 @@ text_speed = 0.08
 turn = 0
 z = 0
 red = "\u001b[31m"
+empty = False
+possible_moves = []
+player = ""
 
 def PlaceSign():
     global board
@@ -22,6 +26,15 @@ def PlaceSign():
             board[player_input] = "X"
         else:
             board[player_input] = "O"
+    else:
+        wrongInput = True
+
+def PlaceSignAi():
+    global board
+    global player_input
+    global wrongInput
+    if board[player_input] == " ":
+        board[player_input] = "X"
     else:
         wrongInput = True
 
@@ -99,6 +112,13 @@ def CheckCol():
                         board[y+3] = (red + "O" + white)
                         board[y+6] = (red + "O" + white)
 
+def EmptyBoard():
+    global board
+    global empty
+    if board.count(" ") == 0:
+        empty = True
+    else:
+        empty = False
 
 def CheckDiag():
     global board
@@ -132,65 +152,201 @@ def CheckWinner():
     CheckDiag()
     CheckRow()
 
-while z == 0:
-    os.system('clear')
-    y_n = str(input("Do you want the tutorial, (y) or (n):"))
-    if y_n == "y":
+def PVP():
+    global board
+    global player_input
+    global wrongInput
+    global winnerO
+    global winnerX
+    global turn
+    global white
+    global red
+    global Green
+    global z
+    global tutorial
+    global text_speed
+    global empty
+    global player
+    while z == 0:
         os.system('clear')
-        printExample()
-        for i in tutorial: 
+        y_n = str(input("Do you want the tutorial, (y) or (n):"))
+        if y_n == "y":
+            os.system('clear')
+            printExample()
+            for i in tutorial: 
                 print(i, end='') 
                 sys.stdout.flush() 
                 time.sleep(text_speed)
-        time.sleep(4)
-        break
-    else:
-        break
-
-
-
-while turn <= 9 or winnerO == False or winnerX == False:
-    if turn % 2 == 0:
-        player = "X"
-    else:
-        player = "O"
-
-    os.system('clear')
-    printBoard()
-    try:
-        player_input = int(input("Enter sign location (%s):" % player)) - 1
-    except ValueError:
-        print("Wrong input, please try again")
-        time.sleep(2)
-        continue
-
-    try:
-        PlaceSign()
-    except IndexError:
-        print("Wrong input, please try again")
-        time.sleep(2)
-        continue
-    if wrongInput == True:
-            print("Wrong input, please try again")
-            time.sleep(2)
-            wrongInput = False
-            continue
-    else:
-            CheckWinner()
-            if winnerO == True:
+            time.sleep(4)
+            z += 1
+        else:
+            z += 1
+    while z == 0:
+            os.system('clear')
+            y_n = str(input("Do you want the tutorial, (y) or (n):"))
+            if y_n == "y":
                 os.system('clear')
-                break
-            elif winnerX == True:
-                os.system('clear')
-                break
-
+                printExample()
+                for i in tutorial: 
+                    print(i, end='') 
+                    sys.stdout.flush() 
+                    time.sleep(text_speed)
+                time.sleep(4)
+                z += 1
             else:
-                turn += 1
+                z += 1
+    while turn <= 9 or winnerO == False or winnerX == False:
+        if " " in board:
+            if turn % 2 == 0:
+                player = "X"
+            else:
+                player = "O"
+
+            os.system('clear')
+            printBoard()
+            try:
+                player_input = int(input("Enter sign location (%s):" % player)) - 1
+            except ValueError:
+                print("Wrong input, please try again")
+                time.sleep(2)
                 continue
 
-if winnerO == True:
-    printBoard()
-    print("The winner is O")
-elif winnerX == True:
-    printBoard()
-    print("The winner is X")
+            try:
+                PlaceSign()
+            except IndexError:
+                print("Wrong input, please try again")
+                time.sleep(2)
+                continue
+            if wrongInput == True:
+                    print("Wrong input, please try again")
+                    time.sleep(2)
+                    wrongInput = False
+                    continue
+            else:
+                    CheckWinner()
+                    if winnerO == True:
+                        os.system('clear')
+                        printBoard()
+                        print("The winner is O")
+                        sys.exit()
+                    elif winnerX == True:
+                        os.system('clear')
+                        printBoard()
+                        print("The winner is X")
+                        sys.exit()
+                    else:
+                        turn += 1
+                        continue
+        else:
+            os.system('clear')
+            printBoard()
+            print("The game is a draw")
+
+def Validmoves():
+    global board
+    global possible_moves
+    possible_moves = []
+    for x in range(len(board)):
+        if board[x] == " ":
+            possible_moves.append(x)
+    return possible_moves
+
+def Minimax():
+    global board
+    global possible_moves
+    global choose_move
+    if " " in board:
+        Validmoves()
+        choose_move = random.choice(possible_moves)
+        board[choose_move] = "O"
+    else:
+        sys.exit()
+
+
+    
+def PVAI():
+    global board
+    global player_input
+    global wrongInput
+    global winnerO
+    global winnerX
+    global turn
+    global white
+    global red
+    global Green
+    global z
+    global tutorial
+    global text_speed
+    global empty
+    while z == 0:
+        os.system('clear')
+        y_n = str(input("Do you want the tutorial, (y) or (n):"))
+        if y_n == "y":
+            os.system('clear')
+            printExample()
+            for i in tutorial: 
+                print(i, end='') 
+                sys.stdout.flush() 
+                time.sleep(text_speed)
+            time.sleep(4)
+            z += 1
+        else:
+            break
+    while turn <= 9 or winnerO == False or winnerX == False:
+        if " " in board:
+            os.system('clear')
+            printBoard()
+            player_input = int(input("Enter sign location:")) - 1
+            if board[player_input] == " ":
+                if wrongInput == True:
+                    print("Wrong input, please try again")
+                    time.sleep(2)
+                    continue
+                else:
+                    PlaceSignAi()
+                    CheckWinner()
+                    if winnerO == True:
+                        os.system('clear')
+                        printBoard()
+                        print("The winner is O")
+                        sys.exit()
+
+                    elif winnerX == True:
+                        os.system('clear')
+                        printBoard()
+                        print("The winner is X")
+                        sys.exit()
+                    else:
+                        Minimax()
+                        CheckWinner()
+                        if winnerO == True:
+                            os.system('clear')
+                            printBoard()
+                            print("The winner is O")
+                            sys.exit()
+                        elif winnerX == True:
+                            os.system('clear')
+                            printBoard()
+                            print("The winner is X")
+                            sys.exit()
+                        else:
+                            turn += 1
+                            continue
+            else:
+                print("Wrong input, please try again")
+                time.sleep(2)
+                continue
+        else:
+            os.system('clear')
+            printBoard()
+            print("The game is a draw")
+
+while True:
+    os.system('clear')
+    k = str(input("Enter 1 to play against humain or 2 to play against AI:"))
+    if k == "1":
+        PVP()
+    elif k == "2":
+        PVAI()
+    else:
+        print("Please enter the number 1 or 2")
