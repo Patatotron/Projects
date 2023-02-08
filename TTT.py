@@ -1,16 +1,17 @@
 import os
 import sys, time 
-import random
 
 board = [" ", " ", " ", " ", " ", " ", " ", " ", " "]
 winnerX = False
 winnerO = False
 wrongInput = False
-Green = "\u001b"
-tutorial = "This is how you need to place your signs"
+Green = "\u001b[32m"
+white = "\u001b[37m"
+tutorial = (Green + "This is how you need to place your signs" + white)
 text_speed = 0.08
 turn = 0
 z = 0
+red = "\u001b[31m"
 
 def PlaceSign():
     global board
@@ -57,44 +58,74 @@ def CheckRow():
     global board
     global winnerX
     global winnerO
+    global red
+    global white
     for y in range(0,9,3):
         if board[y] == "X":
             if board[y+1] == "X":
                 if board[y+2] == "X":
                     winnerX = True
+                    board[y] = (red + "X" + white)
+                    board[y+1] = (red + "X" + white)
+                    board[y+2] = (red + "X" + white)
         elif board[y] == "O":
             if board[y+1] == "O":
                 if board[y+2] == "O":
                     winnerO = True
+                    board[y] = (red + "O" + white)
+                    board[y+1] = (red + "O" + white)
+                    board[y+2] = (red + "O" + white)
 
 def CheckCol():
     global board
     global winnerX
     global winnerO
+    global red
+    global white
     for y in range(0,3):
         if board[y] == "X":
             if board[y+3] == "X":
                 if board[y+6] == "X":
                     winnerX = True
+                    board[y] = (red + "X" + white)
+                    board[y+3] = (red + "X" + white)
+                    board[y+6] = (red + "X" + white)
         else:
             if board[y] == "O":
                 if board[y+3] == "O":
                     if board[y+6] == "O":
                         winnerO = True
+                        board[y] = (red + "O" + white)
+                        board[y+3] = (red + "O" + white)
+                        board[y+6] = (red + "O" + white)
 
 
 def CheckDiag():
     global board
     global winnerX
     global winnerO
+    global red
+    global white
     if board[0] == board[4] and board[4] == board[8] and board[0] == "X":
         winnerX = True
+        board[0] = (red + "X" + white)
+        board[4] = (red + "X" + white)
+        board[8] = (red + "X" + white)
     elif board[0] == board[4] and board[4] == board[8] and board[0] == "O":
         winnerO = True
+        board[0] = (red + "O" + white)
+        board[4] = (red + "O" + white)
+        board[8] = (red + "O" + white)
     elif board[2] == board[4] and board[4] == board[6] and board[2] == "X":
         winnerX = True
+        board[2] = (red + "X" + white)
+        board[4] = (red + "X" + white)
+        board[6] = (red + "X" + white)
     elif board[2] == board[4] and board[4] == board[6] and board[2] == "O":
         winnerO = True
+        board[2] = (red + "O" + white)
+        board[4] = (red + "O" + white)
+        board[6] = (red + "O" + white)
 
 def CheckWinner():
     CheckCol()
@@ -126,28 +157,40 @@ while turn <= 9 or winnerO == False or winnerX == False:
 
     os.system('clear')
     printBoard()
-    player_input = int(input("Enter sign location (%s):" % player)) - 1
-    PlaceSign()
-    if wrongInput == True:
+    try:
+        player_input = int(input("Enter sign location (%s):" % player)) - 1
+    except ValueError:
         print("Wrong input, please try again")
         time.sleep(2)
-        wrongInput = False
         continue
-    else:
-        CheckWinner()
-        if winnerO == True:
-            os.system('clear')
-            break
-        elif winnerX == True:
-            os.system('clear')
-            break
 
-        else:
-            turn += 1
+    try:
+        PlaceSign()
+    except IndexError:
+        print("Wrong input, please try again")
+        time.sleep(2)
+        continue
+    if wrongInput == True:
+            print("Wrong input, please try again")
+            time.sleep(2)
+            wrongInput = False
             continue
+    else:
+            CheckWinner()
+            if winnerO == True:
+                os.system('clear')
+                break
+            elif winnerX == True:
+                os.system('clear')
+                break
+
+            else:
+                turn += 1
+                continue
 
 if winnerO == True:
     printBoard()
     print("The winner is O")
 elif winnerX == True:
+    printBoard()
     print("The winner is X")
